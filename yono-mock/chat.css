@@ -1,0 +1,110 @@
+/* ── Chat Advisor Layout & Animations ─────────────────────── */
+.chat-container {
+    display: flex;
+    flex-direction: column;
+    height: 480px;
+    margin: 10px 16px;
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    border-radius: 20px;
+    overflow: hidden;
+    animation: chatOpen 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes chatOpen {
+    from { opacity: 0; transform: scale(0.95) translateY(20px); }
+    to { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+.chat-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 16px;
+    background: rgba(26, 58, 107, 0.4);
+    border-bottom: 1px solid var(--glass-border);
+}
+
+.chat-back {
+    background: none; border: none; color: var(--accent-cyan);
+    font-size: 1.1rem; cursor: pointer; padding-right: 4px;
+}
+
+.chat-avatar {
+    width: 32px; height: 32px;
+    background: linear-gradient(135deg, var(--accent-cyan), var(--accent-purple));
+    border-radius: 50%; display: flex; align-items: center; justify-content: center;
+    font-size: 0.9rem;
+}
+
+.chat-title h4 { color: var(--text-primary); font-size: 0.85rem; font-weight: 700; }
+.chat-title span { color: var(--accent-green); font-size: 0.65rem; font-weight: 600; display: block; }
+
+.chat-messages {
+    flex: 1; padding: 16px; overflow-y: auto;
+    display: flex; flex-direction: column; gap: 12px;
+    scrollbar-width: none;
+}
+.chat-messages::-webkit-scrollbar { display: none; }
+
+.msg-bubble {
+    max-width: 80%; padding: 10px 14px; border-radius: 16px;
+    font-size: 0.82rem; line-height: 1.4; color: var(--text-primary);
+}
+
+.msg-bubble.user {
+    align-self: flex-end;
+    background: linear-gradient(135deg, var(--accent-purple), #6366f1);
+    border-bottom-right-radius: 4px;
+}
+
+.msg-bubble.bot {
+    align-self: flex-start;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid var(--glass-border);
+    border-bottom-left-radius: 4px;
+}
+
+/* ── Typing Indicator ────────────────────────────────────── */
+.typing-indicator {
+    align-self: flex-start; background: rgba(255, 255, 255, 0.05);
+    padding: 10px 16px; border-radius: 16px; display: flex; gap: 4px;
+}
+.typing-indicator span {
+    width: 6px; height: 6px; background: var(--text-muted); border-radius: 50%;
+    animation: typing 1.4s infinite both;
+}
+.typing-indicator span:nth-child(2) { animation-delay: .2s; }
+.typing-indicator span:nth-child(3) { animation-delay: .4s; }
+
+@keyframes typing {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-4px); }
+}
+
+/* ── Chat Action Controls ────────────────────────────────── */
+.chat-quick-actions {
+    display: flex; gap: 6px; padding: 8px 16px; overflow-x: auto;
+}
+.quick-reply-btn {
+    flex-shrink: 0; padding: 6px 12px; background: rgba(99,102,241,0.15);
+    border: 1px solid rgba(99,102,241,0.3); border-radius: 12px;
+    color: var(--accent-cyan); font-size: 0.72rem; font-weight: 600; cursor: pointer;
+}
+
+.chat-input-bar {
+    display: flex; gap: 8px; padding: 12px 16px;
+    background: rgba(10, 22, 40, 0.6); border-top: 1px solid var(--glass-border);
+}
+
+.chat-input-bar input {
+    flex: 1; background: rgba(255, 255, 255, 0.05); border: 1px solid var(--glass-border);
+    border-radius: 12px; padding: 10px 14px; color: var(--text-primary);
+    font-size: 0.82rem; font-family: var(--font); outline: none;
+}
+
+.chat-send-btn {
+    background: var(--accent-cyan); border: none; border-radius: 12px;
+    width: 38px; height: 38px; display: flex; align-items: center; justify-content: center;
+    color: #000; font-size: 1rem; cursor: pointer; font-weight: 700;
+}
