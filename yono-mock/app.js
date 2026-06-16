@@ -37,7 +37,7 @@ function ChatAdvisor({ event, message, onClose, onStatusChange }) {
         if (message) {
             const initial = {
                 role: "assistant",
-                text: `Hi ${name}! I saw your recent ${event.event_type.replace('_',' ')}. I highly recommend ${message.product} for you. Would you like to check details or apply instantly?`
+                text: `Hi ${name}! I saw your recent ${event.event_type.replace('_', ' ')}. I highly recommend ${message.product} for you. Would you like to check details or apply instantly?`
             };
             setMessages(message.chat_history && message.chat_history.length > 0 ? message.chat_history : [initial]);
         }
@@ -59,13 +59,13 @@ function ChatAdvisor({ event, message, onClose, onStatusChange }) {
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ customer_id: event.customer_id, message_id: message.id, user_message: text })
         })
-        .then(r => r.json())
-        .then(data => {
-            setTyping(false);
-            setMessages(data.chat_history);
-            if (data.status === "converted") onStatusChange("converted");
-        })
-        .catch(() => setTyping(false));
+            .then(r => r.json())
+            .then(data => {
+                setTyping(false);
+                setMessages(data.chat_history);
+                if (data.status === "converted") onStatusChange("converted");
+            })
+            .catch(() => setTyping(false));
     };
 
     return React.createElement("div", { className: "chat-container" },
@@ -109,14 +109,21 @@ function App() {
             .then(data => {
                 const evts = (data.events || []).slice(0, 15);
                 setEvents(evts);
+                const msgsMap = {};
                 evts.forEach(e => {
-                    fetch(`${API}/messages/${e.customer_id}`)
-                        .then(r => r.json())
-                        .then(d => {
-                            const matchingMsg = (d.messages || []).find(m => strId(m.event_id) === strId(e.id));
-                            if (matchingMsg) setMessages(prev => ({ ...prev, [e.id]: matchingMsg }));
-                        });
+                    if (e.message_id) {
+                        msgsMap[e.id] = {
+                            id: e.message_id,
+                            customer_id: e.customer_id,
+                            event_id: e.id,
+                            product: e.product,
+                            message: e.message,
+                            status: e.status || "detected",
+                            chat_history: e.chat_history || []
+                        };
+                    }
                 });
+                setMessages(msgsMap);
             });
     };
 

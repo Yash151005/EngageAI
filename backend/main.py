@@ -76,7 +76,8 @@ def get_events(event_type: Optional[str] = Query(None)):
             "product": "$msg.product",
             "message": "$msg.message",
             "status": "$msg.status",
-            "message_id": "$msg._id"
+            "message_id": "$msg._id",
+            "chat_history": "$msg.chat_history"
         }},
         {"$project": {"cust": 0, "msg": 0}},
         {"$sort": {"detected_at": -1}},

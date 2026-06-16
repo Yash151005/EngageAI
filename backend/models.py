@@ -42,6 +42,8 @@ class DetectedEvent(BaseModel):
     message: Optional[str] = None
     status: Optional[str] = None
     message_id: Optional[Any] = None
+    chat_history: Optional[List[dict]] = None
+
 
 
 
