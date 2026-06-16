@@ -66,8 +66,19 @@ def get_events(event_type: Optional[str] = Query(None)):
             "foreignField": "_id", "as": "cust",
         }},
         {"$unwind": {"path": "$cust", "preserveNullAndEmptyArrays": True}},
-        {"$addFields": {"customer_name": "$cust.name"}},
-        {"$project": {"cust": 0}},
+        {"$lookup": {
+            "from": "messages", "localField": "_id",
+            "foreignField": "event_id", "as": "msg",
+        }},
+        {"$unwind": {"path": "$msg", "preserveNullAndEmptyArrays": True}},
+        {"$addFields": {
+            "customer_name": "$cust.name",
+            "product": "$msg.product",
+            "message": "$msg.message",
+            "status": "$msg.status",
+            "message_id": "$msg._id"
+        }},
+        {"$project": {"cust": 0, "msg": 0}},
         {"$sort": {"detected_at": -1}},
     ]
 

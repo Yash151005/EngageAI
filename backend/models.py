@@ -38,6 +38,11 @@ class DetectedEvent(BaseModel):
     event_type: str
     event_data: Optional[dict] = None
     detected_at: Optional[str] = None
+    product: Optional[str] = None
+    message: Optional[str] = None
+    status: Optional[str] = None
+    message_id: Optional[Any] = None
+
 
 
 class Message(BaseModel):

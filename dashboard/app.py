@@ -79,16 +79,10 @@ with tabs[0]:
             st.info("No active events. Try running the detection pipeline or injecting transactions.")
         else:
             for ev in events:
-                # Fetch message context
-                try:
-                    msgs = requests.get(f"{API}/messages/{ev['customer_id']}", timeout=5).json().get("messages", [])
-                    msg_obj = next((m for m in msgs if str(m.get("event_id")) == str(ev.get("id"))), None)
-                except Exception:
-                    msg_obj = None
-
-                status = msg_obj.get("status", "detected") if msg_obj else "detected"
-                product = msg_obj.get("product", "—") if msg_obj else "—"
-                nudge = msg_obj.get("message", "—") if msg_obj else "—"
+                status = ev.get("status") or "detected"
+                product = ev.get("product") or "—"
+                nudge = ev.get("message") or "—"
+                msg_id = ev.get("message_id")
 
                 badge_html = f'<span class="status-badge badge-{status}">{status}</span>'
                 
@@ -102,9 +96,9 @@ with tabs[0]:
                     
                     st.info(f"💬 **SMS Nudge:** {nudge}")
                     
-                    if status in ["detected", "sent"]:
+                    if status in ["detected", "sent"] and msg_id:
                         if st.button("📲 Push to YONO", key=f"snd_{ev['id']}"):
-                            requests.post(f"{API}/messages/{msg_obj['id']}/status?status=sent")
+                            requests.post(f"{API}/messages/{msg_id}/status?status=sent")
                             st.success("Nudge dispatched to YONO.")
                             st.rerun()
 
