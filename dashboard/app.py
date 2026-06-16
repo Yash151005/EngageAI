@@ -78,7 +78,11 @@ with tabs[0]:
         if not events:
             st.info("No active events. Try running the detection pipeline or injecting transactions.")
         else:
-            for ev in events:
+            total_events_count = len(events)
+            limit = st.slider("Alert Display Limit", 5, 100, 15)
+            events_to_show = events[:limit]
+            st.caption(f"Showing {len(events_to_show)} of {total_events_count} active alerts. Adjust slider to view more.")
+            for ev in events_to_show:
                 status = ev.get("status") or "detected"
                 product = ev.get("product") or "—"
                 nudge = ev.get("message") or "—"
