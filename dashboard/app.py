@@ -8,7 +8,7 @@ import requests
 import pandas as pd
 from datetime import datetime
 
-API = "http://localhost:8000"
+API = "http://127.0.0.1:8000"
 
 st.set_page_config(page_title="EngageAI — SBI Dashboard", page_icon="🏦", layout="wide")
 
@@ -68,9 +68,10 @@ with tabs[0]:
                 "All", "salary_increase", "emi_closure", "fd_maturity", "large_expense", "travel_spike", "education_payment"
             ], label_visibility="collapsed")
 
+        limit = st.slider("Alert Display Limit", 5, 100, 15)
         # Fetch Events
         try:
-            url = f"{API}/events" + ("" if event_filter == "All" else f"?event_type={event_filter}")
+            url = f"{API}/events?limit={limit}" + ("" if event_filter == "All" else f"&event_type={event_filter}")
             events = requests.get(url, timeout=5).json().get("events", [])
         except Exception:
             events = []
@@ -78,11 +79,8 @@ with tabs[0]:
         if not events:
             st.info("No active events. Try running the detection pipeline or injecting transactions.")
         else:
-            total_events_count = len(events)
-            limit = st.slider("Alert Display Limit", 5, 100, 15)
-            events_to_show = events[:limit]
-            st.caption(f"Showing {len(events_to_show)} of {total_events_count} active alerts. Adjust slider to view more.")
-            for ev in events_to_show:
+            st.caption(f"Showing up to {limit} active alerts. Adjust slider to view more.")
+            for ev in events:
                 status = ev.get("status") or "detected"
                 product = ev.get("product") or "—"
                 nudge = ev.get("message") or "—"

@@ -85,6 +85,7 @@ def generate_all_messages():
         inserts.append({
             "customer_id": ev["customer_id"],
             "event_id": ev["_id"],
+            "event_type": ev["event_type"],
             "product": product,
             "message": message,
             "channel": "YONO",

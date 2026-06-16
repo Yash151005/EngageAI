@@ -55,12 +55,14 @@ def run_detection():
     )
 
 @app.get("/events", response_model=EventsResponse)
-def get_events(event_type: Optional[str] = Query(None)):
+def get_events(event_type: Optional[str] = Query(None), limit: int = 15):
     db = get_db()
     match = {"event_type": event_type} if event_type else {}
 
     pipeline = [
         {"$match": match},
+        {"$sort": {"detected_at": -1}},
+        {"$limit": limit},
         {"$lookup": {
             "from": "customers", "localField": "customer_id",
             "foreignField": "_id", "as": "cust",
@@ -80,7 +82,6 @@ def get_events(event_type: Optional[str] = Query(None)):
             "chat_history": "$msg.chat_history"
         }},
         {"$project": {"cust": 0, "msg": 0}},
-        {"$sort": {"detected_at": -1}},
     ]
 
     rows = list(db.detected_events.aggregate(pipeline))
@@ -208,13 +209,8 @@ def get_campaign_stats():
     conv_count = db.messages.count_documents({"status": "converted"})
 
     pipeline = [
-        {"$lookup": {
-            "from": "detected_events", "localField": "event_id",
-            "foreignField": "_id", "as": "evt"
-        }},
-        {"$unwind": {"path": "$evt", "preserveNullAndEmptyArrays": True}},
         {"$group": {
-            "_id": "$evt.event_type",
+            "_id": "$event_type",
             "sent": {"$sum": {"$cond": [{"$in": ["$status", ["sent", "clicked", "converted"]]}, 1, 0]}},
             "clicked": {"$sum": {"$cond": [{"$in": ["$status", ["clicked", "converted"]]}, 1, 0]}},
             "converted": {"$sum": {"$cond": [{"$eq": ["$status", "converted"]}, 1, 0]}}

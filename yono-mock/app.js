@@ -1,4 +1,4 @@
-const API = "http://localhost:8000";
+const API = "http://127.0.0.1:8000";
 const { useState, useEffect, useRef } = React;
 
 const EVENT_LABELS = { salary_increase: "Salary Increase", emi_closure: "EMI Closure", fd_maturity: "FD Maturity", large_expense: "Large Expense", travel_spike: "Travel Spike", education_payment: "Education Payment" };
@@ -104,7 +104,7 @@ function App() {
     const [view, setView] = useState("nudges"); // nudges, chat
 
     const loadData = () => {
-        fetch(`${API}/events`)
+        fetch(`${API}/events?limit=15`)
             .then(r => r.json())
             .then(data => {
                 const evts = (data.events || []).slice(0, 15);

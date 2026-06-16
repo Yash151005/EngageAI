@@ -41,6 +41,9 @@ def init_db():
     db.detected_events.create_index("customer_id")
     db.messages.create_index("customer_id")
     db.messages.create_index("event_id")
+    db.messages.create_index("event_type")
+    db.messages.create_index("status")
+
 
     # Seed default configuration rules if none exist
     if db.rules_config.count_documents({}) == 0:
